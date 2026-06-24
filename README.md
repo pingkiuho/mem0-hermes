@@ -147,25 +147,44 @@ cd server && make bootstrap
 cd server && docker compose up -d    # dashboard: http://localhost:9001, API: http://localhost:9000
 ```
 
-This fork is tuned for Hermes-style self-hosted agent memory. Copy `server/.env.example` to `server/.env`, then choose one model profile:
+This fork is tuned for Hermes-style self-hosted agent memory. Copy `server/.env.example` to `server/.env`, then choose LLM and embedder settings independently:
 
 ```bash
 cd server
 cp .env.example .env
 ```
 
-**Local Ollama profile** keeps memory extraction and embeddings local. It uses `provider=ollama`, `OLLAMA_BASE_URL`, and `MEM0_EMBEDDING_DIMS=768` for `nomic-embed-text`.
+**LLM settings** can be local Ollama or any OpenAI-compatible cloud endpoint such as OpenAI, OpenRouter, Xiaomi MiMo, MiniMax, vLLM, LiteLLM, or a private gateway.
 
-**OpenAI-compatible profile** works with OpenAI-compatible endpoints such as OpenAI, OpenRouter, Xiaomi MiMo, vLLM, LiteLLM, or a private gateway. Set:
+**Embedder settings** can be local Ollama, OpenAI-compatible cloud embeddings, Gemini, or another bundled provider. `MEM0_EMBEDDING_DIMS` must match the embedder model before you create data.
+
+Cloud LLM + local Ollama embedder:
 
 ```env
 MEM0_DEFAULT_LLM_PROVIDER=openai
-MEM0_DEFAULT_LLM_MODEL=<chat-model>
+MEM0_DEFAULT_LLM_MODEL=<xiaomi-or-minimax-chat-model>
+MEM0_LLM_OPENAI_API_KEY=<cloud-llm-token>
+MEM0_LLM_OPENAI_BASE_URL=<openai-compatible-base-url>
+
+MEM0_DEFAULT_EMBEDDER_PROVIDER=ollama
+MEM0_DEFAULT_EMBEDDER_MODEL=nomic-embed-text
+MEM0_EMBEDDING_DIMS=768
+OLLAMA_BASE_URL=http://host.docker.internal:11434
+```
+
+Cloud LLM + OpenAI-compatible cloud embedder:
+
+```env
+MEM0_DEFAULT_LLM_PROVIDER=openai
+MEM0_DEFAULT_LLM_MODEL=<xiaomi-or-minimax-chat-model>
+MEM0_LLM_OPENAI_API_KEY=<cloud-llm-token>
+MEM0_LLM_OPENAI_BASE_URL=<openai-compatible-base-url>
+
 MEM0_DEFAULT_EMBEDDER_PROVIDER=openai
-MEM0_DEFAULT_EMBEDDER_MODEL=<embedding-model>
-MEM0_EMBEDDING_DIMS=<embedding-dimensions>
-OPENAI_API_KEY=<token>
-OPENAI_BASE_URL=<openai-compatible-base-url>
+MEM0_DEFAULT_EMBEDDER_MODEL=text-embedding-3-small
+MEM0_EMBEDDING_DIMS=1536
+MEM0_EMBEDDER_OPENAI_API_KEY=<embedder-token>
+MEM0_EMBEDDER_OPENAI_BASE_URL=https://api.openai.com/v1
 ```
 
 Ports and public URLs are also env-driven: `MEM0_API_PORT`, `MEM0_DASHBOARD_PORT`, `PUBLIC_API_URL`, and `CORS_ORIGINS`.

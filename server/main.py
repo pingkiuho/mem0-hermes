@@ -113,6 +113,10 @@ POSTGRES_COLLECTION_NAME = os.environ.get("POSTGRES_COLLECTION_NAME", "memories"
 
 OPENAI_API_KEY = os.environ.get("OPENAI_API_KEY")
 OPENAI_BASE_URL = os.environ.get("OPENAI_BASE_URL")
+LLM_OPENAI_API_KEY = os.environ.get("MEM0_LLM_OPENAI_API_KEY", OPENAI_API_KEY)
+LLM_OPENAI_BASE_URL = os.environ.get("MEM0_LLM_OPENAI_BASE_URL", OPENAI_BASE_URL)
+EMBEDDER_OPENAI_API_KEY = os.environ.get("MEM0_EMBEDDER_OPENAI_API_KEY", OPENAI_API_KEY)
+EMBEDDER_OPENAI_BASE_URL = os.environ.get("MEM0_EMBEDDER_OPENAI_BASE_URL", OPENAI_BASE_URL)
 HISTORY_DB_PATH = os.environ.get("HISTORY_DB_PATH", "/app/history/history.db")
 DEFAULT_LLM_MODEL = os.environ.get("MEM0_DEFAULT_LLM_MODEL", "gpt-4.1-nano-2025-04-14")
 DEFAULT_EMBEDDER_MODEL = os.environ.get("MEM0_DEFAULT_EMBEDDER_MODEL", "text-embedding-3-small")
@@ -123,19 +127,29 @@ OLLAMA_BASE_URL = os.environ.get("OLLAMA_BASE_URL", "http://host.docker.internal
 
 def _build_llm_config():
     if DEFAULT_LLM_PROVIDER == "ollama":
-        return {"provider": "ollama", "config": {"model": DEFAULT_LLM_MODEL, "ollama_base_url": OLLAMA_BASE_URL, "temperature": 0.2}}
-    config = {"api_key": OPENAI_API_KEY, "temperature": 0.2, "model": DEFAULT_LLM_MODEL}
-    if DEFAULT_LLM_PROVIDER == "openai" and OPENAI_BASE_URL:
-        config["openai_base_url"] = OPENAI_BASE_URL
+        return {
+            "provider": "ollama",
+            "config": {
+                "model": DEFAULT_LLM_MODEL,
+                "ollama_base_url": OLLAMA_BASE_URL,
+                "temperature": 0.2,
+            },
+        }
+    config = {"api_key": LLM_OPENAI_API_KEY, "temperature": 0.2, "model": DEFAULT_LLM_MODEL}
+    if DEFAULT_LLM_PROVIDER == "openai" and LLM_OPENAI_BASE_URL:
+        config["openai_base_url"] = LLM_OPENAI_BASE_URL
     return {"provider": DEFAULT_LLM_PROVIDER, "config": config}
 
 
 def _build_embedder_config():
     if DEFAULT_EMBEDDER_PROVIDER == "ollama":
-        return {"provider": "ollama", "config": {"model": DEFAULT_EMBEDDER_MODEL, "ollama_base_url": OLLAMA_BASE_URL}}
-    config = {"api_key": OPENAI_API_KEY, "model": DEFAULT_EMBEDDER_MODEL}
-    if DEFAULT_EMBEDDER_PROVIDER == "openai" and OPENAI_BASE_URL:
-        config["openai_base_url"] = OPENAI_BASE_URL
+        return {
+            "provider": "ollama",
+            "config": {"model": DEFAULT_EMBEDDER_MODEL, "ollama_base_url": OLLAMA_BASE_URL},
+        }
+    config = {"api_key": EMBEDDER_OPENAI_API_KEY, "model": DEFAULT_EMBEDDER_MODEL}
+    if DEFAULT_EMBEDDER_PROVIDER == "openai" and EMBEDDER_OPENAI_BASE_URL:
+        config["openai_base_url"] = EMBEDDER_OPENAI_BASE_URL
     return {"provider": DEFAULT_EMBEDDER_PROVIDER, "config": config}
 
 

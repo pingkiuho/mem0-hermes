@@ -71,7 +71,7 @@ echo ""
 echo "Open your dashboard at $DASHBOARD_URL to see and manage your memories in your browser."
 echo ""
 
-if [ "${MEM0_DEFAULT_LLM_PROVIDER:-openai}" != "ollama" ] && ! grep -qE '^(OPENAI|ANTHROPIC|GOOGLE)_API_KEY=.' .env 2>/dev/null; then
+if [ "${MEM0_DEFAULT_LLM_PROVIDER:-openai}" != "ollama" ] && ! grep -qE '^((MEM0_LLM_OPENAI|OPENAI|ANTHROPIC|GOOGLE)_API_KEY)=.' .env 2>/dev/null; then
   echo "!! No LLM provider API key set in server/.env."
   echo "   Set OPENAI_API_KEY (or ANTHROPIC_API_KEY / GOOGLE_API_KEY), then:"
   echo "     docker compose up -d --force-recreate mem0"
