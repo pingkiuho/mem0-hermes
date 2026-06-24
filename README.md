@@ -144,8 +144,31 @@ npm install mem0ai
 cd server && make bootstrap
 
 # Manual: start the stack and finish setup via the browser wizard.
-cd server && docker compose up -d    # http://localhost:3000
+cd server && docker compose up -d    # dashboard: http://localhost:9001, API: http://localhost:9000
 ```
+
+This fork is tuned for Hermes-style self-hosted agent memory. Copy `server/.env.example` to `server/.env`, then choose one model profile:
+
+```bash
+cd server
+cp .env.example .env
+```
+
+**Local Ollama profile** keeps memory extraction and embeddings local. It uses `provider=ollama`, `OLLAMA_BASE_URL`, and `MEM0_EMBEDDING_DIMS=768` for `nomic-embed-text`.
+
+**OpenAI-compatible profile** works with OpenAI-compatible endpoints such as OpenAI, OpenRouter, Xiaomi MiMo, vLLM, LiteLLM, or a private gateway. Set:
+
+```env
+MEM0_DEFAULT_LLM_PROVIDER=openai
+MEM0_DEFAULT_LLM_MODEL=<chat-model>
+MEM0_DEFAULT_EMBEDDER_PROVIDER=openai
+MEM0_DEFAULT_EMBEDDER_MODEL=<embedding-model>
+MEM0_EMBEDDING_DIMS=<embedding-dimensions>
+OPENAI_API_KEY=<token>
+OPENAI_BASE_URL=<openai-compatible-base-url>
+```
+
+Ports and public URLs are also env-driven: `MEM0_API_PORT`, `MEM0_DASHBOARD_PORT`, `PUBLIC_API_URL`, and `CORS_ORIGINS`.
 
 See the [self-hosted docs](https://docs.mem0.ai/open-source/overview) for configuration.
 

@@ -1,11 +1,16 @@
 .PHONY: up down clean logs seed wait-api wait-dashboard bootstrap health build run_local reset-admin-password prune-logs
 
+-include .env
+
 OUTPUT ?= text
-API_URL ?= http://localhost:8888
-DASHBOARD_URL ?= http://localhost:3000
+MEM0_API_PORT ?= 9000
+MEM0_DASHBOARD_PORT ?= 9001
+PUBLIC_API_URL ?= http://localhost:$(MEM0_API_PORT)
+DASHBOARD_URL ?= http://localhost:$(MEM0_DASHBOARD_PORT)
+API_URL ?= $(PUBLIC_API_URL)
 
 up:
-	@for port in 3000 8888; do \
+	@for port in $(MEM0_DASHBOARD_PORT) $(MEM0_API_PORT); do \
 		if lsof -iTCP:$$port -sTCP:LISTEN >/dev/null 2>&1; then \
 			echo "error: port $$port is already in use."; \
 			echo "find the owning process with: lsof -iTCP:$$port -sTCP:LISTEN"; \
